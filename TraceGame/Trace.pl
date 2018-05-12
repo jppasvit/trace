@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 
-system("printf \"\e[8;20;85;t\"");
+#system("printf \"\e[8;20;85;t\"");
 print "\nReglas:\nDebe alinear verticalmente a nuestro intrepido aventurero -|- con el poofball *\n";
 print "Ingrese 'a' para moverse a la izquierda y 'd' para moverse a la derecha : \n\n";
 
@@ -27,62 +27,47 @@ push @SPACES, "+";
 # print @SPACES ."\n";
 
 # STDIN
-my $nombre;
+my $NOMBRE;
 
 # First values of -|- and poofball
 my @tabs = (" "," "," "," "," "," "," "," "," "," "," "," ");
 my @tabsMeta = (" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ");
 
 my $contador = 1; 
-while($nombre ne "exit\n"){
+while($NOMBRE ne "exit\n"){
 	$contador++;
 	if($contador % 2 == 0){
 			@tabsMeta = movMeta( @tabsMeta );
 	}
 
-  $nombre=<STDIN>;
+  	$NOMBRE=<STDIN>;
 
-  if($nombre eq "a\n" && scalar( @tabs ) > 0){
-		pop( @tabs );
-  }elsif( $nombre eq "d\n" ){
-   	push @tabs," ";
-  }
+  	@tabs = movPlayer(@tabs);
 
-  my $num_spaces_tabs = $TABLE - ( scalar(@tabs) + 2 ) ;
-  my $num_spaces_tabsmeta = $TABLE - ( scalar(@tabsMeta) + 2 ) ;
-  my @spaces_tabs;
-  my @spaces_tabsmeta;
+  	my $num_spaces_tabs = $TABLE - ( scalar(@tabs) + 2 ) ;
+  	my $num_spaces_tabsmeta = $TABLE - ( scalar(@tabsMeta) + 2 ) ;
+  	my @spaces_tabs = fillSpaces( $num_spaces_tabs );
+  	my @spaces_tabsmeta = fillSpaces( $num_spaces_tabsmeta );
  
- 	foreach (0..$num_spaces_tabs){
-	    push @spaces_tabs, " ";
-	}
-	foreach (0..$num_spaces_tabsmeta){
-			push @spaces_tabsmeta, " ";
-	}
-
-	system("clear");
+	system("cls");
 	print "\n\n\n\n\n\n\n";
 	print "@AST\n";
 	print "@SPACES\n";
-  unshift @tabs, "+";
-  push @spaces_tabs, "+";
+  	unshift @tabs, "+";
+  	push @spaces_tabs, "+";
 	print "@tabs-|-@spaces_tabs\n";
-  unshift @tabsMeta, "+";
-  push @spaces_tabsmeta, "+";
+  	unshift @tabsMeta, "+";
+  	push @spaces_tabsmeta, "+";
 	print "@tabsMeta * @spaces_tabsmeta\n";
 	print "@SPACES\n";
 	print "@AST\n";
 
-  shift @tabs;
-  shift @tabsMeta;
-  pop @spaces_tabsmeta;
-  pop @spaces_tabs;
+  	shift @tabs;
+  	shift @tabsMeta;
+  	pop @spaces_tabsmeta;
+  	pop @spaces_tabs;
 
-	if(scalar( @tabs ) == scalar( @tabsMeta )){
-			print "\n\n\n\t\t\t\t\t\t\t\t\t\t YOU WIN!!!\n\n\n";
-			$nombre = "exit\n"
-	}
-
+  	isWin( \@tabs, \@tabsMeta);
 }
 
 
@@ -90,27 +75,57 @@ print "\nAdios\n";
 
 sub movMeta {
 	my @tabs = @_;
-  	my $movement = int(rand( 17 ));
-  	my $direc = int(rand(2));
-  	if( $direc == 1){
+	my $movement = int(rand( 17 ));
+	my $direc = int(rand(2));
+	my $until = $TABLE - 1;
+
+	if( $direc == 1){
 		  for ( 0..$movement ){
-      		if(scalar( @tabs ) > 0){
-        		pop( @tabs ); 
-      		}   
-    	}
-    }else{
+			if(scalar( @tabs ) > 0){
+				pop( @tabs ); 
+			}   
+		}
+	}else{
 		  for ( 0..$movement ){
-			   if(scalar( @tabs ) < 41){
-        		push @tabs, " ";
-         }
+			   if(scalar( @tabs ) < $until){
+				push @tabs, " ";
+		 }
 		  }
   }
   return @tabs;
 } 
 
 
+sub isWin {
+	my $playerPos = shift; 
+	my $poofballPos = shift;
+	# print "Player position: " . @$playerPos . "\n";
+	# print "Poofball position: " .@$poofballPos . "\n";
+
+	if(scalar( @$playerPos ) == scalar( @$poofballPos )){
+			print "\n\n\n YOU WIN!!!\n\n\n";
+			$NOMBRE = "exit\n"
+	}
+}
 
 
+sub movPlayer {
+	my @playerPos = @_;
+
+	if($NOMBRE eq "a\n" && scalar( @playerPos ) > 0){
+		pop( @playerPos );
+  	}elsif( $NOMBRE eq "d\n" ){
+		push @playerPos," ";
+  	}
+  	return @playerPos;
+}
+
+sub fillSpaces {
+	my $num_spaces = shift;
+	my @spaces;
+	map { push @spaces, " " } (0..$num_spaces);
+	return @spaces
+}
 
 
 
