@@ -71,7 +71,7 @@ while($NOMBRE ne "exit\n"){
 }
 
 
-print "\nAdios\n";
+#print "\nAdios\n";
 
 sub movMeta {
 	my @tabs = @_;
@@ -103,7 +103,7 @@ sub isWin {
 	# print "Poofball position: " .@$poofballPos . "\n";
 
 	if(scalar( @$playerPos ) == scalar( @$poofballPos )){
-			print "\n\n\n YOU WIN!!!\n\n\n";
+			print "\n\n\nYOU WIN!!!\n\n\n";
 			$NOMBRE = "exit\n"
 	}
 }
